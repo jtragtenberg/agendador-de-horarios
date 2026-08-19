@@ -162,6 +162,40 @@ function clearEditorSelection() {
   Object.values(editorCells).forEach(c => c.classList.remove('selected'));
 }
 
+// ==== MODAL DE ESPERA ====
+const modalOverlay = document.getElementById('modal-overlay');
+const modalSpinner = document.getElementById('modal-spinner');
+const modalText = document.getElementById('modal-text');
+const modalClose = document.getElementById('modal-close');
+let modalLocked = false;
+
+function showModalLoading(text) {
+  modalLocked = true;
+  modalSpinner.className = 'modal-spinner';
+  modalSpinner.textContent = '';
+  modalText.textContent = text;
+  modalClose.classList.remove('visible');
+  modalOverlay.classList.add('active');
+}
+
+function showModalDone(text, icon) {
+  modalLocked = false;
+  modalSpinner.className = 'modal-spinner done';
+  modalSpinner.textContent = icon;
+  modalText.textContent = text;
+  modalClose.classList.add('visible');
+}
+
+function hideModal() {
+  if (modalLocked) return;
+  modalOverlay.classList.remove('active');
+}
+
+modalClose.addEventListener('click', hideModal);
+modalOverlay.addEventListener('click', (ev) => {
+  if (ev.target === modalOverlay) hideModal();
+});
+
 // ==== BACKEND ====
 function isConfigured() {
   return SCRIPT_URL && !SCRIPT_URL.includes('COLE_AQUI');
@@ -192,11 +226,14 @@ async function loadData() {
 
 async function saveData(nome, slots) {
   const status = document.getElementById('editor-status');
+  const btnSalvar = document.getElementById('btn-salvar');
   if (!isConfigured()) {
     status.textContent = 'Configure a URL do Apps Script em script.js (constante SCRIPT_URL) antes de salvar.';
     return;
   }
   status.textContent = 'Salvando...';
+  btnSalvar.disabled = true;
+  showModalLoading('Salvando sua disponibilidade... aguarde um instante.');
   try {
     const body = new URLSearchParams({
       action: 'save',
@@ -208,8 +245,13 @@ async function saveData(nome, slots) {
     if (data.error) throw new Error(data.error);
     status.textContent = 'Disponibilidade salva com sucesso!';
     await loadData();
+    showModalDone('Disponibilidade salva com sucesso!', '✅');
+    setTimeout(hideModal, 1400);
   } catch (err) {
     status.textContent = 'Erro ao salvar: ' + err.message;
+    showModalDone('Não foi possível salvar: ' + err.message, '⚠️');
+  } finally {
+    btnSalvar.disabled = false;
   }
 }
 
