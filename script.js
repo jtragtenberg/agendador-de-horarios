@@ -1,6 +1,6 @@
 // ==== CONFIGURAÇÃO ====
 // Cole aqui a URL do seu Apps Script depois de implantar (veja apps-script/Code.gs).
-const SCRIPT_URL = 'COLE_AQUI_A_URL_DO_SEU_APPS_SCRIPT';
+const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbwyehM3U49H7x1IhoulfHstkNjWs0K-dtnyxpybtabL3wjI_HSgnhx-fPO8K5Nmy0GR/exec';
 
 // ==== CONSTANTES DA GRADE ====
 const DIAS = ['Segunda', 'Terça', 'Quarta', 'Quinta', 'Sexta', 'Sábado', 'Domingo'];
