@@ -222,6 +222,10 @@ main {
   transition: background 0.08s ease;
 }
 
+.grid-editor {
+  touch-action: none;
+}
+
 .grid-editor .grid-cell:hover {
   outline: 2px solid var(--accent);
   outline-offset: -2px;

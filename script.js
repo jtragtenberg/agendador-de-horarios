@@ -84,27 +84,52 @@ function setupEditorDrag(container) {
 
   document.addEventListener('mouseup', () => { isDragging = false; });
 
-  // suporte a toque: 1 dedo seleciona (bloqueia o scroll), 2+ dedos rolam a tela normalmente
+  // suporte a toque: o CSS (touch-action: none) já desliga o scroll nativo
+  // nesta área, então o scroll com 2 dedos é feito manualmente aqui em JS.
+  let touchMode = null; // 'paint' | 'pan'
+  let panLastMid = null;
+  const panWrapper = container.closest('.grid-wrapper');
+
+  const midpoint = (touches) => {
+    let x = 0, y = 0;
+    for (let i = 0; i < touches.length; i++) {
+      x += touches[i].clientX;
+      y += touches[i].clientY;
+    }
+    return { x: x / touches.length, y: y / touches.length };
+  };
+
   container.addEventListener('touchstart', (ev) => {
-    if (ev.touches.length > 1) {
+    if (ev.touches.length >= 2) {
+      touchMode = 'pan';
       isDragging = false;
+      panLastMid = midpoint(ev.touches);
+      ev.preventDefault();
       return;
     }
+    touchMode = 'paint';
     const touch = ev.touches[0];
     const target = document.elementFromPoint(touch.clientX, touch.clientY);
     const cellEl = target && target.closest('.grid-cell');
-    if (cellEl) {
-      ev.preventDefault();
-      start(cellEl);
-    }
+    ev.preventDefault();
+    if (cellEl) start(cellEl);
   }, { passive: false });
 
   container.addEventListener('touchmove', (ev) => {
-    if (ev.touches.length > 1) {
-      isDragging = false;
+    if (ev.touches.length >= 2) {
+      if (touchMode !== 'pan') {
+        touchMode = 'pan';
+        isDragging = false;
+        panLastMid = midpoint(ev.touches);
+      }
+      ev.preventDefault();
+      const mid = midpoint(ev.touches);
+      window.scrollBy(0, panLastMid.y - mid.y);
+      if (panWrapper) panWrapper.scrollLeft += panLastMid.x - mid.x;
+      panLastMid = mid;
       return;
     }
-    if (!isDragging) return;
+    if (touchMode !== 'paint' || !isDragging) return;
     ev.preventDefault();
     const touch = ev.touches[0];
     const target = document.elementFromPoint(touch.clientX, touch.clientY);
@@ -112,8 +137,9 @@ function setupEditorDrag(container) {
     if (cellEl) applySelection(cellEl, dragMode);
   }, { passive: false });
 
-  container.addEventListener('touchend', () => { isDragging = false; });
-  container.addEventListener('touchcancel', () => { isDragging = false; });
+  const endTouch = () => { isDragging = false; touchMode = null; panLastMid = null; };
+  container.addEventListener('touchend', endTouch);
+  container.addEventListener('touchcancel', endTouch);
 }
 
 function cellKey(cellEl) {
