@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Agendador de Horários da Equipe</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <header class="topbar">
+    <h1>Agendador de Horários</h1>
+    <p class="subtitle">Marque os horários em que você está disponível durante a semana — sem precisar escolher datas.</p>
+  </header>
+
+  <nav class="tabs">
+    <button class="tab-btn active" data-tab="grupo">Disponibilidade do grupo</button>
+    <button class="tab-btn" data-tab="editor">Adicionar / editar meus horários</button>
+  </nav>
+
+  <main>
+    <section id="tab-grupo" class="tab-panel active">
+      <div class="panel-head">
+        <div>
+          <h2>Disponibilidade combinada</h2>
+          <p id="grupo-status" class="hint">Carregando respostas...</p>
+        </div>
+        <button id="btn-atualizar" class="btn secondary">Atualizar</button>
+      </div>
+
+      <div id="grupo-legenda" class="legend"></div>
+
+      <div class="grid-wrapper">
+        <div id="grid-grupo" class="grid grid-grupo"></div>
+      </div>
+
+      <div class="respondentes">
+        <h3>Quem já respondeu</h3>
+        <div id="lista-respondentes" class="chips"></div>
+      </div>
+    </section>
+
+    <section id="tab-editor" class="tab-panel">
+      <div class="panel-head">
+        <div>
+          <h2>Meus horários disponíveis</h2>
+          <p class="hint">Digite seu nome, clique e arraste sobre os quadrados para marcar os horários livres.</p>
+        </div>
+      </div>
+
+      <div class="editor-controls">
+        <label for="input-nome">Seu nome</label>
+        <input type="text" id="input-nome" placeholder="Ex: Maria Silva" autocomplete="off" />
+        <div class="editor-actions">
+          <button id="btn-limpar" class="btn ghost">Limpar seleção</button>
+          <button id="btn-salvar" class="btn primary">Salvar disponibilidade</button>
+        </div>
+        <p id="editor-status" class="hint"></p>
+      </div>
+
+      <div class="grid-wrapper">
+        <div id="grid-editor" class="grid grid-editor"></div>
+      </div>
+    </section>
+  </main>
+
+  <footer>
+    <p>Os dados ficam salvos em uma Planilha Google compartilhada pela equipe.</p>
+  </footer>
+
+  <script src="script.js"></script>
+</body>
+</html>
