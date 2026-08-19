@@ -216,7 +216,7 @@ main {
 }
 
 .grid-cell {
-  height: 26px;
+  height: 32px;
   cursor: pointer;
   background: var(--green-0);
   transition: background 0.08s ease;
@@ -324,4 +324,25 @@ footer {
   z-index: 50;
   max-width: 220px;
   display: none;
+}
+
+@media (max-width: 700px) {
+  .grid-cell {
+    height: 40px;
+  }
+
+  .grid {
+    min-width: 560px;
+    grid-template-columns: 54px repeat(7, minmax(56px, 1fr));
+  }
+
+  .grid-time {
+    font-size: 0.68rem;
+    padding: 4px 3px;
+  }
+
+  .grid-header {
+    font-size: 0.72rem;
+    padding: 8px 2px;
+  }
 }

@@ -84,22 +84,36 @@ function setupEditorDrag(container) {
 
   document.addEventListener('mouseup', () => { isDragging = false; });
 
-  // suporte a toque
+  // suporte a toque: 1 dedo seleciona (bloqueia o scroll), 2+ dedos rolam a tela normalmente
   container.addEventListener('touchstart', (ev) => {
+    if (ev.touches.length > 1) {
+      isDragging = false;
+      return;
+    }
     const touch = ev.touches[0];
     const target = document.elementFromPoint(touch.clientX, touch.clientY);
-    start(target && target.closest('.grid-cell'));
-  }, { passive: true });
+    const cellEl = target && target.closest('.grid-cell');
+    if (cellEl) {
+      ev.preventDefault();
+      start(cellEl);
+    }
+  }, { passive: false });
 
   container.addEventListener('touchmove', (ev) => {
+    if (ev.touches.length > 1) {
+      isDragging = false;
+      return;
+    }
     if (!isDragging) return;
+    ev.preventDefault();
     const touch = ev.touches[0];
     const target = document.elementFromPoint(touch.clientX, touch.clientY);
     const cellEl = target && target.closest('.grid-cell');
     if (cellEl) applySelection(cellEl, dragMode);
-  }, { passive: true });
+  }, { passive: false });
 
-  document.addEventListener('touchend', () => { isDragging = false; });
+  container.addEventListener('touchend', () => { isDragging = false; });
+  container.addEventListener('touchcancel', () => { isDragging = false; });
 }
 
 function cellKey(cellEl) {
